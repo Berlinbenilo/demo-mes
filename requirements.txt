@@ -1,0 +1,10 @@
+face-recognition
+opencv-python
+ultralytics
+dotenv==0.9.9
+python-dotenv
+uvicorn
+fastapi
+langchain_core
+langchain_google_genai
+python-multipart
