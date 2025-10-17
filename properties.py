@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
+endpoint = os.getenv("AZURE_OPENAI_ENDPOINT_CHAT")
+azure_key = os.getenv("AZURE_OPENAI_API_KEY_CHAT")
 entity_mapping = {
     "dashboard": "/dashboard?id=1"
 }

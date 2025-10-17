@@ -2,6 +2,7 @@ import json
 import os
 import shutil
 import tempfile
+import time
 import uuid
 from datetime import datetime
 from pathlib import Path
@@ -107,7 +108,9 @@ async def transcribe_audio(file: UploadFile = File(...)):
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp_file:
             tmp_file.write(await file.read())
             tmp_file_path = tmp_file.name
+            start_time = time.time()
             response = transcript_audio(tmp_file_path, prompt=audio_transcription_prompt)
+            print(f"Time consumed by transcription: {time.time() - start_time} sec")
             return JSONResponse(response, status_code=200)
 
     except Exception as e:
