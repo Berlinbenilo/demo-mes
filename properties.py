@@ -6,8 +6,11 @@ from dotenv import load_dotenv
 load_dotenv(override=True)
 
 os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
+entity_mapping = {
+    "dashboard": "/dashboard?id=1"
+}
 
-entities_to_find = ["oem dashboard"]
+entities_to_find = list(entity_mapping.keys())
 
 # {
 #     "oem dashboard":"oem_dashboard",

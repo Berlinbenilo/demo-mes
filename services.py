@@ -1,11 +1,14 @@
 import base64
 import os
+import time
 from typing import Dict, Optional
 
 import face_recognition
 from langchain_core.messages import HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
 from pydantic import BaseModel, Field
+
+from properties import entity_mapping
 
 _llm_instance = None
 
@@ -33,7 +36,7 @@ def transcript_audio(audio_file_path: str, prompt: str) -> Dict:
     audio_mime_type = "audio/mpeg"
     with open(audio_file_path, "rb") as audio_file:
         encoded_audio = base64.b64encode(audio_file.read()).decode("utf-8")
-
+    start_time = time.time()
     message = HumanMessage(
         content=[
             {"type": "text", "text": prompt},
@@ -47,7 +50,8 @@ def transcript_audio(audio_file_path: str, prompt: str) -> Dict:
 
     structured_llm = get_llm().with_structured_output(TranscriptionOutput)
     response = structured_llm.invoke([message])
-    return {"transcription": response.transcription, "entity": response.entity}
+    print(f"Time consumed: {time.time() - start_time} secs")
+    return {"transcription": response.transcription, "target_url": entity_mapping.get(response.entity, None)}
 
 
 def setup_face_recognition(known_face_dir: str, upload_dir: str):
