@@ -6,6 +6,8 @@ import uuid
 from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
+import base64
+import io
 
 import cv2
 import face_recognition
@@ -48,6 +50,9 @@ class DetectionResponse(BaseModel):
     image_url: str
     created_at: datetime
     detections: list
+
+class ImageBase64(BaseModel):
+    image_data: str  # Base64-encoded image string
 
 
 def load_user_mapping():
@@ -109,12 +114,21 @@ async def transcribe_audio(file: UploadFile = File(...)):
 
 
 @app.post("/image/recognize")
-async def recognize_image(file: UploadFile = File(...)):
-    upload_path = os.path.join(UPLOAD_DIR, file.filename)
-    with open(upload_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+async def recognize_image(data: ImageBase64):
+# async def recognize_image(file: UploadFile = File(...)):
+    # upload_path = os.path.join(UPLOAD_DIR, file.filename)
+    # with open(upload_path, "wb") as buffer:
+    #     shutil.copyfileobj(file.file, buffer)
+    #
+    # unknown_image = face_recognition.load_image_file(upload_path)
+    try:
+        image_bytes = base64.b64decode(data.image_data)
+        image_stream = io.BytesIO(image_bytes)
 
-    unknown_image = face_recognition.load_image_file(upload_path)
+        # Load image from bytes
+        unknown_image = face_recognition.load_image_file(image_stream)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid image data: {str(e)}")
     unknown_encodings = face_recognition.face_encodings(unknown_image)
 
     if not unknown_encodings:
