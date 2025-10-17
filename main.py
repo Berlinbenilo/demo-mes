@@ -122,7 +122,8 @@ async def recognize_image(data: ImageBase64):
     #
     # unknown_image = face_recognition.load_image_file(upload_path)
     try:
-        image_bytes = base64.b64decode(data.image_data)
+        _image_data = data.image_data.split("data:image/jpeg;base64,")[-1]
+        image_bytes = base64.b64decode(_image_data)
         image_stream = io.BytesIO(image_bytes)
 
         # Load image from bytes
