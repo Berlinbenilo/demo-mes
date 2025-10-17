@@ -52,7 +52,8 @@ class DetectionResponse(BaseModel):
     detections: list
 
 class ImageBase64(BaseModel):
-    image_data: str  # Base64-encoded image string
+    image: str
+    username: str# Base64-encoded image string
 
 
 def load_user_mapping():
@@ -122,7 +123,7 @@ async def recognize_image(data: ImageBase64):
     #
     # unknown_image = face_recognition.load_image_file(upload_path)
     try:
-        _image_data = data.image_data.split("data:image/jpeg;base64,")[-1]
+        _image_data = data.image.split("data:image/jpeg;base64,")[-1]
         image_bytes = base64.b64decode(_image_data)
         image_stream = io.BytesIO(image_bytes)
 
@@ -145,17 +146,17 @@ async def recognize_image(data: ImageBase64):
         best_match_index = face_distances.argmin()
 
     response_data = {
-        "name": None,
+        "username": data.username,
         "user_id": None,
-        "status": False
+        "verified_status": False
     }
 
     if best_match_index is not None and results[best_match_index]:
         matched_name = known_face_names[best_match_index]
         matched_user_id = get_user_id_by_name(matched_name)
-        response_data["name"] = matched_name
+        response_data["username"] = matched_name
         response_data["user_id"] = matched_user_id
-        response_data["status"] = True
+        response_data["verified_status"] = True
 
     return JSONResponse(content=response_data)
 
