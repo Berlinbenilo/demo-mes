@@ -6,7 +6,8 @@ from typing import Dict, Optional
 import face_recognition
 from langchain_core.messages import HumanMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
+from pydantic import Field
 
 from properties import entity_mapping
 
@@ -29,7 +30,7 @@ def get_llm():
 
 class TranscriptionOutput(BaseModel):
     transcription: str = Field(description="The complete transcription of the audio")
-    entity: Optional[str] = Field(default=None, description="Matched entity from the provided list")
+    # entity: Optional[str] = Field(default=None, description="Matched entity from the provided list")
 
 
 def transcript_audio(audio_file_path: str, prompt: str) -> Dict:
@@ -40,7 +41,7 @@ def transcript_audio(audio_file_path: str, prompt: str) -> Dict:
     print("audio_mime_type:", audio_mime_type)
     message = HumanMessage(
         content=[
-            {"type": "text", "text": prompt},
+            {"type": "text", "text": "Generate the transcription"},
             {
                 "type": "media",
                 "data": encoded_audio,
@@ -53,6 +54,7 @@ def transcript_audio(audio_file_path: str, prompt: str) -> Dict:
     print("Entering llm..!")
     response = structured_llm.invoke([message])
     print(f"Time consumed: {time.time() - start_time} secs")
+    return {"transcription": response.transcription}
     return {"transcription": response.transcription, "target_url": entity_mapping.get(response.entity, None)}
 
 
