@@ -37,6 +37,7 @@ def transcript_audio(audio_file_path: str, prompt: str) -> Dict:
     with open(audio_file_path, "rb") as audio_file:
         encoded_audio = base64.b64encode(audio_file.read()).decode("utf-8")
     start_time = time.time()
+    print("audio_mime_type:", audio_mime_type)
     message = HumanMessage(
         content=[
             {"type": "text", "text": prompt},
@@ -49,6 +50,7 @@ def transcript_audio(audio_file_path: str, prompt: str) -> Dict:
     )
 
     structured_llm = get_llm().with_structured_output(TranscriptionOutput)
+    print("Entering llm..!")
     response = structured_llm.invoke([message])
     print(f"Time consumed: {time.time() - start_time} secs")
     return {"transcription": response.transcription, "target_url": entity_mapping.get(response.entity, None)}
