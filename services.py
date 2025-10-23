@@ -1,3 +1,4 @@
+import json
 import os
 from typing import Dict, Optional
 
@@ -11,7 +12,7 @@ from langchain_openai import AzureChatOpenAI
 from pydantic import BaseModel
 from pydantic import Field
 
-from properties import endpoint, azure_key, entities_to_find, entity_mapping
+from properties import endpoint, azure_key, ENTITY_JSON_FILE
 
 gemini_flash = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
@@ -83,6 +84,11 @@ def transcript_audio(audio_file_path: str, prompt: str) -> Dict:
             )
         ]
     )
+
+    with open(ENTITY_JSON_FILE) as f:
+        entity_mapping = json.load(f)
+
+    entities_to_find = list(entity_mapping.keys())
 
     output = llm_wrapper.invoke_with_parser(prompt_template= prompt,
                                          placeholder_input={"text": response.text,

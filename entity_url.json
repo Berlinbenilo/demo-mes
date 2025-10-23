@@ -8,5 +8,6 @@
   "items listing": "/items",
   "sales order listing": "/sales-orders",
   "bom listing": "/bom",
-  "add inventory": "/add-inventory"
+  "add inventory": "/add-inventory",
+  "route card listing": "/route-cards"
 }
