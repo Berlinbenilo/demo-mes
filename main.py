@@ -165,16 +165,16 @@ async def recognize_image(data: ImageBase64):
 
 
 @app.post("/image/upload")
-async def upload_image(name: str = Form(...), file: UploadFile = File(...)):
+async def upload_image(user_id: str = Form(...),user_name: str = Form(...), file: UploadFile = File(...)):
     try:
-        user_id = str(uuid4())
+        # user_id = str(uuid4())
         os.makedirs(KNOWN_FACES_DIR, exist_ok=True)
 
         file_extension = os.path.splitext(file.filename)[1]
         if not file_extension:
             file_extension = ".jpg"
 
-        new_filename = f"{name}{file_extension}"
+        new_filename = f"{user_name}{file_extension}"
         file_path = os.path.join(KNOWN_FACES_DIR, new_filename)
 
         with open(file_path, "wb") as buffer:
@@ -183,7 +183,7 @@ async def upload_image(name: str = Form(...), file: UploadFile = File(...)):
         # Load existing mapping and append new user
         user_mapping = load_user_mapping()
         user_mapping[user_id] = {
-            "name": name,
+            "name": user_name,
             "filename": new_filename,
             "file_path": file_path
         }
@@ -197,7 +197,7 @@ async def upload_image(name: str = Form(...), file: UploadFile = File(...)):
         return JSONResponse(
             {
                 "user_id": user_id,
-                "name": name,
+                "name": user_name,
                 "filename": new_filename,
                 "message": f"Image '{new_filename}' uploaded successfully."
             },
