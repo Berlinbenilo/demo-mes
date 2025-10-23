@@ -9,20 +9,23 @@ os.environ["GOOGLE_API_KEY"] = os.getenv("GOOGLE_API_KEY")
 endpoint = os.getenv("AZURE_OPENAI_ENDPOINT_CHAT")
 azure_key = os.getenv("AZURE_OPENAI_API_KEY_CHAT")
 entity_mapping = {
-    "dashboard": "/dashboard?id=1"
+"production order listing" : "/production-orders",
+"generate rc" : "/generate-route-card",
+"bom imports" : "/import",
+"high level planning": "/high-level-plan",
+"machine monitoring" : "/machine-monitoring",
+"route card monitoring" : "/route-card-monitoring",
+"items listing" : "/items",
+"sales order listing" : "/sales-orders",
+"bom listing" : "/bom",
+"add inventory" : "/add-inventory"
 }
 
 entities_to_find = list(entity_mapping.keys())
 
-# {
-#     "oem dashboard":"oem_dashboard",
-# }
-
-audio_transcription_prompt = f"""
-    1. First, generate a complete transcript of the speech from the audio.
-    2. From that transcription, find the first word that matches any entity in the following list: {entities_to_find}.
-    3. Provide the output in the requested JSON format. If no entity is found, the entity field should be null.
-"""
+audio_transcription_prompt = """You are the entity recogniser your task is to find the appropriate entity from the given 
+    transcription text if it matches the list of entity. The text is {text}. The list of entities are {entities}. 
+    Return the output in the json format as per given below, {format_instructions}. Note" If nothing is matched leave it empty """
 
 UPLOAD_DIR = "images/uploads"
 KNOWN_FACES_DIR = 'images/known_faces'

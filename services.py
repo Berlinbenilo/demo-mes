@@ -83,10 +83,8 @@ def transcript_audio(audio_file_path: str, prompt: str) -> Dict:
             )
         ]
     )
-    prompt_template = """You are the entity recogniser your task is to find the appropriate entity from the given 
-    transcription text if iot matches the list of entity. The text is {text}. The list of entities are {entities}. 
-    Return the output in the json format as per given below, {format_instructions}. Note" If nothing is matched leave it empty """""
-    output = llm_wrapper.invoke_with_parser(prompt_template= prompt_template,
+
+    output = llm_wrapper.invoke_with_parser(prompt_template= prompt,
                                          placeholder_input={"text": response.text,
                                                             "entities": entities_to_find},
                                          validator = ParserOutput)
