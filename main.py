@@ -1,3 +1,5 @@
+import base64
+import io
 import json
 import os
 import shutil
@@ -6,9 +8,6 @@ import time
 import uuid
 from datetime import datetime
 from pathlib import Path
-from uuid import uuid4
-import base64
-import io
 
 import cv2
 import face_recognition
@@ -23,7 +22,7 @@ from pydantic import BaseModel
 from ultralytics import YOLO
 
 from properties import audio_transcription_prompt, UPLOAD_DIR, KNOWN_FACES_DIR, MODEL_PATH, JSON_FILE, IMAGES_DIR, \
-    SERVER_URL
+    SERVER_URL, ENTITY_JSON_FILE
 from services import transcript_audio, setup_face_recognition
 
 app = FastAPI()
@@ -52,9 +51,15 @@ class DetectionResponse(BaseModel):
     created_at: datetime
     detections: list
 
+
+class EntityUpload(BaseModel):
+    key_name: str
+    target_entity: str
+
+
 class ImageBase64(BaseModel):
     image: str
-    username: str# Base64-encoded image string
+    username: str  # Base64-encoded image string
 
 
 def load_user_mapping():
@@ -117,9 +122,43 @@ async def transcribe_audio(file: UploadFile = File(...)):
         return JSONResponse({"error": str(e)}, status_code=500)
 
 
+@app.post("/audio/entity")
+async def upload_entity(entity: EntityUpload):
+    # Load the existing JSON data (or create a new one)
+    if os.path.exists(ENTITY_JSON_FILE):
+        with open(ENTITY_JSON_FILE, "r") as f:
+            data = json.load(f)
+    else:
+        data = {}
+
+    # Append or update the key-value pair
+    key = entity.key_name.strip().lower()
+    value = entity.target_entity.strip()
+
+    if key in data:
+        # If the key already exists, append the new value
+        existing_value = data[key]
+        if isinstance(existing_value, list):
+            if value not in existing_value:
+                existing_value.append(value)
+        else:
+            # Convert to list if not already one
+            if existing_value != value:
+                data[key] = [existing_value, value]
+    else:
+        # Add new key-value pair
+        data[key] = value
+
+    # Save the updated data back to the file
+    with open(ENTITY_JSON_FILE, "w") as f:
+        json.dump(data, f, indent=2)
+
+    return {"message": "Entity added/updated successfully", "data": data}
+
+
 @app.post("/image/recognize")
 async def recognize_image(data: ImageBase64):
-# async def recognize_image(file: UploadFile = File(...)):
+    # async def recognize_image(file: UploadFile = File(...)):
     # upload_path = os.path.join(UPLOAD_DIR, file.filename)
     # with open(upload_path, "wb") as buffer:
     #     shutil.copyfileobj(file.file, buffer)
@@ -165,7 +204,7 @@ async def recognize_image(data: ImageBase64):
 
 
 @app.post("/image/upload")
-async def upload_image(user_id: str = Form(...),user_name: str = Form(...), file: UploadFile = File(...)):
+async def upload_image(user_id: str = Form(...), user_name: str = Form(...), file: UploadFile = File(...)):
     try:
         # user_id = str(uuid4())
         os.makedirs(KNOWN_FACES_DIR, exist_ok=True)
