@@ -9,5 +9,16 @@
   "sales order listing": "/sales-orders",
   "bom listing": "/bom",
   "add inventory": "/add-inventory",
-  "route card listing": "/route-cards"
+  "route card listing": "/route-cards",
+  "quality dashboard": "/dashboard?dashboardId=b9d9080f-342c-4200-847b-32044a9093ac",
+  "ppc dashboard": "/dashboard?dashboardId=8caeefa9-7e74-4cda-80cc-0c5e3f02364d",
+  "production dashboard": "/dashboard?dashboardId=7391d49b-44a1-437a-87f7-549716386951",
+  "ceo dashboard": "/dashboard?dashboardId=8276fecd-8865-44cd-98da-93d58fd2d1ed",
+  "overall equipment effectiveness": "/dashboard?dashboardId=1d681596-ab06-4d18-9845-16b2d5533bbb",
+  "shop floor work stations tracker": "/dashboard?dashboardId=1f0c2108-fca3-4f27-8e01-87f9508f4bf6",
+  "shop floor operations tracker": "/dashboard?dashboardId=c97228e5-ab5e-4369-b6dd-96bc647ec6dd",
+  "monthly production report": "/dashboard?dashboardId=e47d8c4a-0b6a-4fce-bc28-9c2a722c080e",
+  "shopfloor route card summary": "/dashboard?dashboardId=f052383c-986b-4b55-920b-d82ef2ce2408",
+  "daily production report": "/dashboard?dashboardId=ef7823da-6019-445e-8ec7-c34921e6b549",
+  "planner": "/dashboard?dashboardId=57d25393-2c9b-44f9-a635-145737334623"
 }
