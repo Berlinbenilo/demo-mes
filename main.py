@@ -27,9 +27,12 @@ from services import transcript_audio, setup_face_recognition
 
 app = FastAPI()
 
+ALLOWED_ORIGINS = ["http://localhost:3002", "https://qa-mes.centralindia.cloudapp.azure.com:7002",
+                   "https://dev-mes-v4.centralindia.cloudapp.azure.com:7002"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
